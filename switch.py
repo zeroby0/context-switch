@@ -1,5 +1,12 @@
+#!/usr/bin/env python3
+
 import os
 import sys
+
+try:
+   input = raw_input
+except NameError:
+   pass
 
 def debug(whatever):
 	pass
@@ -50,6 +57,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 
 
 	def createRepo(self): # not a constructor ( __init__ )
+		debug('enter: createRepo()')
 		print('\nEnter a context name for the files already in this folder:\n')
 		os.system('ls -l')
 
@@ -70,8 +78,10 @@ class Switch: # God has instructed me to use OOP. That's why.
 
 		self.createContext(name)
 		print('done.')
+		debug('exit: createRepo()')
 
 	def createContext(self, contextName):
+		debug('enter: createContext()')
 		# dialogue
 		error_ifNotInit(self.repo)
 		error_ifDuplicateContext(self.repo, contextName)
@@ -79,6 +89,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 		os.system('mkdir ' + self.repo + '/' + contextName)
 
 		self.changeContext(contextName)
+		debug('exit: createContext()')
 
 	def currentStatus(self):
 		error_ifNotInit(self.repo)
@@ -96,6 +107,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 		debug("exit: changeContext()")
 
 	def __expandContext(self, contextName):
+		debug('enter: __expandContext()')
 		error_ifNotInit(self.repo)
 		error_ifNoSuchContext(self.repo, contextName)
 
@@ -104,7 +116,8 @@ class Switch: # God has instructed me to use OOP. That's why.
 			fp.write(contextName)
 
 		# Move all files in that context to PWD
-		os.system('mv ' + self.repo + '/' + contextName + '/*' + ' ' + './')
+		os.system('mv ' + self.repo + '/' + contextName + '/*' + ' ' + './' + ' >/dev/null 2>&1')
+		debug('exit: __expandContext()')
 
 	def __getCurrentContext(self):
 		error_ifNotInit(self.repo)
