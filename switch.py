@@ -24,7 +24,7 @@ def update():
 	getInfo = ' && echo "\nGetting update information" && git fetch'
 	dropChanges = ' && git clean -f && git stash save --keep-index && git stash drop'
 	getUpdate = ' && echo "\nDownloading updates" && git pull'
-	setPermissions = ' && chmod u+x ' + sys.argv[0]
+	setPermissions = ' && chmod a+x ' + sys.argv[0]
 
 	os.system( 'cd ' + script_dir + dropChanges + getInfo + getUpdate + setPermissions)
 
