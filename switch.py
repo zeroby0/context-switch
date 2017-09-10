@@ -21,10 +21,11 @@ def debug(whatever):
 
 def update():
 	script_dir = '/'.join(os.path.realpath(__file__).split('/')[0:-1]) + '/'
-	getInfo = '&& echo "Getting update information" && git fetch'
-	getUpdate = '&& echo "Downloading updates" && git pull'
+	getInfo = ' && echo "Getting update information" && git fetch'
+	dropChanges = ' && git clean -f && git stash save --keep-index && git stash drop'
+	getUpdate = ' && echo "Downloading updates" && git pull'
 
-	os.system( 'cd ' + script_dir + getInfo + getUpdate)
+	os.system( 'cd ' + script_dir + dropChanges + getInfo + getUpdate)
 
 def error_ifAlreadyInit(repo):
 	if os.path.exists(repo):
