@@ -157,15 +157,15 @@ class Switch: # God has instructed me to use OOP. That's why.
 		error_ifNoSuchContext(self.repo, contextName)
 
 		error_message = Fore.RED + 'Error: Cannot delete an active context.' + Style.RESET_ALL + '\nPlease change to a different context to delete the current one.'
-		error_ifCurrentContext(self.repo, self.contextFile, contextName, error_message)
+		error_ifCurrentContext(self.repo, self.current_context_filename, contextName, error_message)
 
-		confirmation = input('Are you sure you want to ' Fore.RED + 'delete' +  Style.RESET_ALL + ' context: ' + Fore.YELLOW + contextName + Style.RESET_ALL + ' [y/N]')
+		confirmation = input('\nAre you sure you want to ' + Fore.RED + 'delete' +  Style.RESET_ALL + ' context: ' + Fore.YELLOW + contextName + Style.RESET_ALL + ' [y/N]')
 		if confirmation.lower() not in ['y', 'yes']:
 			print("Aborted.")
 			exit(0)
 
 		os.system("rm -r " + self.repo + '/' + contextName)
-		print("Removed context " + contextName)
+		print("Removed context " + Fore.YELLOW + contextName + Style.RESET_ALL)
 
 		debug('exit: removeContext()')
 
@@ -252,9 +252,9 @@ if __name__ == '__main__':
 			print("") # because there is no \n in changeContext() dialogue
 			switch.changeContext( ''.join(sys.argv[2:]) )
 		elif sys.argv[1] in ['mv', 'rename']:
-			switch.renameContext( ''.join(sys.argv[2:]))
+			switch.renameContext( sys.argv[2], sys.argv[3] )
 		elif sys.argv[1] in ['rm', 'delete', 'remove']:
-			switch.removeContext( sys.argv[2], sys.argv[3] )
+			switch.removeContext( sys.argv[2])
 		else:
 			show_help()
 
