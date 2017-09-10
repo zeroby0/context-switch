@@ -164,7 +164,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 			print("Aborted.")
 			exit(0)
 
-		os.system("rm -r " + self.repo + '/' + contextName)
+		os.system("rm -rf " + self.repo + '/' + contextName)
 		print("Removed context " + Fore.YELLOW + contextName + Style.RESET_ALL)
 
 		debug('exit: removeContext()')
