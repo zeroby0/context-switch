@@ -19,6 +19,8 @@ def debug(whatever):
 	pass
 	#print(whatever)
 
+EXEC_NAME = sys.argv[0].split('/')[-1]
+
 def update():
 	script_dir = '/'.join(os.path.realpath(__file__).split('/')[0:-1]) + '/'
 	getInfo = ' && echo "\nGetting update information" && git fetch'
@@ -32,28 +34,28 @@ def error_ifAlreadyInit(repo):
 	if os.path.exists(repo):
 		print( Fore.RED + '\nAlready a context repository' + Style.RESET_ALL )
 		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'You can list available contexts with:')
-		print( Fore.YELLOW + '      ' + sys.argv[0] + ' ls' + Style.RESET_ALL )
+		print( Fore.YELLOW + '      ' + EXEC_NAME + ' ls' + Style.RESET_ALL )
 		exit(-1)
 
 def error_ifNotInit(repo):
 	if not os.path.exists(repo):
 		print( Fore.RED + '\nfatal: Not a context repository' + Style.RESET_ALL )
 		print( Fore.YELLOW + 'Hint: '  + Style.RESET_ALL + 'You can initialise a repository here with' )
-		print( Fore.YELLOW + '      ' + sys.argv[0] + ' init' + Style.RESET_ALL )
+		print( Fore.YELLOW + '      ' + EXEC_NAME + ' init' + Style.RESET_ALL )
 		exit(-1)
 
 def error_ifDuplicateContext(repo, contextName):
 	if os.path.exists(repo + '/' + contextName):
 		print( Fore.RED + '\nA context with the ' + contextName + ' name already exists.' )
 		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'were you trying to checkout to another context?' )
-		print( Fore.YELLOW + '      ' + sys.argv[0] + ' ck' + ' ' + sys.argv[2] + Style.RESET_ALL )
+		print( Fore.YELLOW + '      ' + EXEC_NAME + ' ck' + ' ' + sys.argv[2] + Style.RESET_ALL )
 		exit(-1)
 
 def error_ifNoSuchContext(repo, contextName):
 	if not os.path.exists(repo + '/' + contextName):
 		print( Fore.RED + '\nNo such context exists' + Style.RESET_ALL )
 		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'were you trying to add another context?' )
-		print( Fore.YELLOW + '      ' + Style.RESET_ALL +  sys.argv[0] + ' add' + ' ' + sys.argv[2])
+		print( Fore.YELLOW + '      ' + Style.RESET_ALL +  EXEC_NAME + ' add' + ' ' + contextName)
 		exit(-1)
 
 def error_ifCurrentContext(repo, contextFile, contextName, message):
@@ -70,15 +72,15 @@ def error_ifCurrentContext(repo, contextFile, contextName, message):
 
 
 def show_help():
-	print(sys.argv[0] + ' <command> <context>')
-	print(' '*(len(sys.argv[0]) + 1) + Fore.YELLOW + 'add: Add a new context.' + Style.RESET_ALL )
-	print(' '*(len(sys.argv[0]) + 1) + 'Your current context is freezed and')
-	print(' '*(len(sys.argv[0]) + 1) + 'a new blank context is created')
-	print(' '*(len(sys.argv[0]) + 1) + "all options: ['add', '--add', '-a', '-add']\n")
+	print(EXEC_NAME + ' <command> <context>')
+	print(' '*(len(EXEC_NAME) + 1) + Fore.YELLOW + 'add: Add a new context.' + Style.RESET_ALL )
+	print(' '*(len(EXEC_NAME) + 1) + 'Your current context is freezed and')
+	print(' '*(len(EXEC_NAME) + 1) + 'a new blank context is created')
+	print(' '*(len(EXEC_NAME) + 1) + "all options: ['add', '--add', '-a', '-add']\n")
 
-	print(' '*(len(sys.argv[0]) + 1) + Fore.YELLOW + 'ck: Checkout to another existing context' + Style.RESET_ALL )
-	print(' '*(len(sys.argv[0]) + 1) + 'current context is switched with the target context')
-	print(' '*(len(sys.argv[0]) + 1) + "all options: ['checkout', 'ck', '-ck', '--ck', 'cd']")
+	print(' '*(len(EXEC_NAME) + 1) + Fore.YELLOW + 'ck: Checkout to another existing context' + Style.RESET_ALL )
+	print(' '*(len(EXEC_NAME) + 1) + 'current context is switched with the target context')
+	print(' '*(len(EXEC_NAME) + 1) + "all options: ['checkout', 'ck', '-ck', '--ck', 'cd']")
 
 
 
