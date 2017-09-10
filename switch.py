@@ -48,7 +48,8 @@ class Switch: # God has instructed me to use OOP. That's why.
 		self.repo = '.contexts'
 		self.ignoreFile = '.contextignore'
 		self.ignore = [self.repo, self.ignoreFile, '.DS_Store']
-		self.current_context_file = self.repo + '/' + '.current_context_qwsedrfx'
+		self.current_context_filename = '.current_context_qwsedrfx'
+		self.current_context_file = self.repo + '/' + self.current_context_filename
 
 		if os.path.exists(self.ignoreFile): 
 			# add files in ignoreFile to list of ignored files
@@ -96,7 +97,8 @@ class Switch: # God has instructed me to use OOP. That's why.
 		print('currently in context: ' + self.__getCurrentContext())
 		print('Available contexts:')
 		for context in self.__getAvailableContexts():
-			print(context)
+			print('    ' + context)
+		print('')
 		return
 
 	def changeContext(self, contextName):
@@ -127,7 +129,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 
 		contexts = os.listdir(self.repo + '/')
 
-		return [ i for i in contexts if i not in [self.ignoreFile]]
+		return [ i for i in contexts if i not in [self.current_context_filename]]
 
 
 
