@@ -19,6 +19,9 @@ def debug(whatever):
 	pass
 	#print(whatever)
 
+def update():
+	os.system( 'cd ' + '/'.join(os.path.realpath(__file__).split('/')[0:-1]) + '/'+ ' && git fetch && git pull')
+
 def error_ifAlreadyInit(repo):
 	if os.path.exists(repo):
 		print( Fore.RED + '\nAlready a context repository' + Style.RESET_ALL )
@@ -185,6 +188,8 @@ if __name__ == '__main__':
 			switch.currentStatus()
 		elif sys.argv[1] in ['help', '-h', '--help']:
 			show_help()
+		elif sys.argv[1] in ['update', '--update']:
+			update()
 		else:
 			print( Fore.RED + '\nunknown command' + Style.RESET_ALL )
 			show_help()
