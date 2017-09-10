@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
-
+from __future__ import print_function
 import os
 import sys
+
+
+try:
+	from colorama import Fore, Back, Style
+except:
+	print("unmet dependency colorama")
+	print("install with: pip install colorama")
 
 try:
    input = raw_input
@@ -12,35 +19,46 @@ def debug(whatever):
 	pass
 	#print(whatever)
 
+def error_ifAlreadyInit(repo):
+	if os.path.exists(repo):
+		print( Fore.RED + '\nAlready a context repository' + Style.RESET_ALL )
+		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'You can list available contexts with:')
+		print( Fore.YELLOW + '      ' + sys.argv[0] + ' ls' + Style.RESET_ALL )
+		exit(-1)
+
 def error_ifNotInit(repo):
 	if not os.path.exists(repo):
-		print('\nFatal: This is not a context repository')
-		print('You can initialise a repository here with')
-		print(sys.argv[0] + ' init')
+		print( Fore.RED + '\nfatal: Not a context repository' + Style.RESET_ALL )
+		print( Fore.YELLOW + 'Hint: '  + Style.RESET_ALL + 'You can initialise a repository here with' )
+		print( Fore.YELLOW + '      ' + sys.argv[0] + ' init' + Style.RESET_ALL )
 		exit(-1)
 
 def error_ifDuplicateContext(repo, contextName):
 	if os.path.exists(repo + '/' + contextName):
-		print('\nA context with that name already exists.')
-		print('Hint: were you trying to checkout to another context?')
-		print('      ' + sys.argv[0] + ' ck' + ' ' + sys.argv[2])
+		print( Fore.RED + '\nA context with that name already exists.' )
+		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'were you trying to checkout to another context?' )
+		print( Fore.YELLOW + '      ' + sys.argv[0] + ' ck' + ' ' + sys.argv[2] + Style.RESET_ALL )
 		exit(-1)
 
 def error_ifNoSuchContext(repo, contextName):
 	if not os.path.exists(repo + '/' + contextName):
-		print('\nNo such context exists')
-		print('Hint: were you trying to add another context?')
-		print('      ' + sys.argv[0] + ' add' + ' ' + sys.argv[2])
+		print( Fore.RED + '\nNo such context exists' + Style.RESET_ALL )
+		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'were you trying to add another context?' )
+		print( Fore.YELLOW + '      ' + Style.RESET_ALL +  sys.argv[0] + ' add' + ' ' + sys.argv[2])
 		exit(-1)
 
 def show_help():
 	print(sys.argv[0] + ' <command> <context>')
-	print(' '*(len*(sys.argv[0]) + 1) + 'add: Add a new context.')
-	print(' '*(len*(sys.argv[0]) + 1) + 'Your current context is freezed and')
-	print(' '*(len*(sys.argv[0]) + 1) + 'a new blank context is created\n')
+	print(' '*(len(sys.argv[0]) + 1) + Fore.YELLOW + 'add: Add a new context.' + Style.RESET_ALL )
+	print(' '*(len(sys.argv[0]) + 1) + 'Your current context is freezed and')
+	print(' '*(len(sys.argv[0]) + 1) + 'a new blank context is created')
+	print(' '*(len(sys.argv[0]) + 1) + "all options: ['add', '--add', '-a', '-add']\n")
 
-	print(' '*(len*(sys.argv[0]) + 1) + 'ck: Checkout to another existing context')
-	print(' '*(len*(sys.argv[0]) + 1) + 'current context is switched with the target context')
+	print(' '*(len(sys.argv[0]) + 1) + Fore.YELLOW + 'ck: Checkout to another existing context' + Style.RESET_ALL )
+	print(' '*(len(sys.argv[0]) + 1) + 'current context is switched with the target context')
+	print(' '*(len(sys.argv[0]) + 1) + "all options: ['checkout', 'ck', '-ck', '--ck', 'cd']")
+
+
 
 
 class Switch: # God has instructed me to use OOP. That's why.
@@ -58,6 +76,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 
 
 	def createRepo(self): # not a constructor ( __init__ )
+		error_ifAlreadyInit(self.repo)
 		debug('enter: createRepo()')
 		print('\nEnter a context name for the files already in this folder:\n')
 		os.system('ls -l')
@@ -88,16 +107,16 @@ class Switch: # God has instructed me to use OOP. That's why.
 		error_ifDuplicateContext(self.repo, contextName)
 
 		os.system('mkdir ' + self.repo + '/' + contextName)
-
+		print("\nCreating new context")
 		self.changeContext(contextName)
 		debug('exit: createContext()')
 
 	def currentStatus(self):
 		error_ifNotInit(self.repo)
-		print('currently in context: ' + self.__getCurrentContext())
+		print('\nCurrently in context: ' + Fore.YELLOW + self.__getCurrentContext() + Style.RESET_ALL)
 		print('Available contexts:')
 		for context in self.__getAvailableContexts():
-			print('    ' + context)
+			print(' ' + Fore.BLUE + context + Style.RESET_ALL , end='')
 		print('')
 		return
 
@@ -109,6 +128,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 
 		self.__freezeContext()
 		self.__expandContext(contextName)
+		print("Now in context: " + Fore.YELLOW + contextName + Style.RESET_ALL )
 		debug("exit: changeContext()")
 
 	def __expandContext(self, contextName):
@@ -161,17 +181,20 @@ if __name__ == '__main__':
 	elif len(sys.argv) == 2:
 		if sys.argv[1] in ['init']:
 			switch.createRepo()
-
+		elif sys.argv[1] in ['ls', 'list', 'show']:
+			switch.currentStatus()
 		elif sys.argv[1] in ['help', '-h', '--help']:
 			show_help()
 		else:
-			print('unknown command')
+			print( Fore.RED + '\nunknown command' + Style.RESET_ALL )
+			show_help()
 
 
 	elif len(sys.argv) == 3:
 		if sys.argv[1] in ['add', '--add', '-a', '-add']:
 			switch.createContext( ''.join(sys.argv[2:]) )
 		elif sys.argv[1] in ['checkout', 'ck', '-ck', '--ck', 'cd']:
+			print("") # because there is no \n in changeContext() dialogue
 			switch.changeContext( ''.join(sys.argv[2:]) )
 		else:
 			show_help()
