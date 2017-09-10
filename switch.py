@@ -156,8 +156,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 		error_ifNotInit(self.repo)
 		error_ifNoSuchContext(self.repo, contextName)
 
-		error_message = Fore.RED + 'Error: Cannot delete an active context.' + Style.RESET_ALL + 
-			'\nPlease change to a different context to delete the current one.'
+		error_message = Fore.RED + 'Error: Cannot delete an active context.' + Style.RESET_ALL + '\nPlease change to a different context to delete the current one.'
 		error_ifCurrentContext(self.repo, self.contextFile, contextName, error_message)
 
 		confirmation = input('Are you sure you want to ' Fore.RED + 'delete' +  Style.RESET_ALL + ' context: ' + Fore.YELLOW + contextName + Style.RESET_ALL + ' [y/N]')
