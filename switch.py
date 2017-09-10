@@ -42,7 +42,7 @@ def error_ifNotInit(repo):
 
 def error_ifDuplicateContext(repo, contextName):
 	if os.path.exists(repo + '/' + contextName):
-		print( Fore.RED + '\nA context with that name already exists.' )
+		print( Fore.RED + '\nA context with the ' + contextName + ' name already exists.' )
 		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'were you trying to checkout to another context?' )
 		print( Fore.YELLOW + '      ' + sys.argv[0] + ' ck' + ' ' + sys.argv[2] + Style.RESET_ALL )
 		exit(-1)
@@ -53,6 +53,19 @@ def error_ifNoSuchContext(repo, contextName):
 		print( Fore.YELLOW + 'Hint: ' + Style.RESET_ALL + 'were you trying to add another context?' )
 		print( Fore.YELLOW + '      ' + Style.RESET_ALL +  sys.argv[0] + ' add' + ' ' + sys.argv[2])
 		exit(-1)
+
+def error_ifCurrentContext(repo, contextFile, contextName, message):
+	currentContext = ''
+	with open(repo + '/' + contextFile, 'r') as fp:
+		for line in fp:
+			currentContext = line
+			break
+
+	if currentContext == contextName:
+		print(message)
+		exit(-1)
+	return False
+
 
 def show_help():
 	print(sys.argv[0] + ' <command> <context>')
@@ -125,7 +138,6 @@ class Switch: # God has instructed me to use OOP. That's why.
 		for context in self.__getAvailableContexts():
 			print(' ' + Fore.BLUE + context + Style.RESET_ALL , end='')
 		print('')
-		return
 
 	def changeContext(self, contextName):
 		debug("enter: changeContext()")
@@ -137,6 +149,41 @@ class Switch: # God has instructed me to use OOP. That's why.
 		self.__expandContext(contextName)
 		print("Now in context: " + Fore.YELLOW + contextName + Style.RESET_ALL )
 		debug("exit: changeContext()")
+
+	def removeContext(self,  contextName):
+		debug('enter: removeContext()')
+
+		error_ifNotInit(self.repo)
+		error_ifNoSuchContext(self.repo, contextName)
+
+		error_message = Fore.RED + 'Error: Cannot delete an active context.' + Style.RESET_ALL + 
+			'\nPlease change to a different context to delete the current one.'
+		error_ifCurrentContext(self.repo, self.contextFile, contextName, error_message)
+
+		confirmation = input('Are you sure you want to ' Fore.RED + 'delete' +  Style.RESET_ALL + ' context: ' + Fore.YELLOW + contextName + Style.RESET_ALL + ' [y/N]')
+		if confirmation.lower() not in ['y', 'yes']:
+			print("Aborted.")
+			exit(0)
+
+		os.system("rm -r " + self.repo + '/' + contextName)
+		print("Removed context " + contextName)
+
+		debug('exit: removeContext()')
+
+	def renameContext(self, currentName, newName):
+		debug('enter: renameContext()')
+
+		error_ifNotInit(self.repo)
+		error_ifNoSuchContext(self.repo, currentName)
+		error_ifDuplicateContext(self.repo, newName)
+
+		os.system('mv ' + self.repo + '/' + currentName + ' ' + self.repo + '/' + newName)
+
+		if self.__getCurrentContext() == contextName:
+			with open(self.current_context_file, 'w') as fp:
+				fp.write(newName)
+		
+		debug('exit: renameContext()')
 
 	def __expandContext(self, contextName):
 		debug('enter: __expandContext()')
@@ -199,12 +246,16 @@ if __name__ == '__main__':
 			show_help()
 
 
-	elif len(sys.argv) == 3:
+	elif len(sys.argv) > 2:
 		if sys.argv[1] in ['add', '--add', '-a', '-add']:
 			switch.createContext( ''.join(sys.argv[2:]) )
 		elif sys.argv[1] in ['checkout', 'ck', '-ck', '--ck', 'cd']:
 			print("") # because there is no \n in changeContext() dialogue
 			switch.changeContext( ''.join(sys.argv[2:]) )
+		elif sys.argv[1] in ['mv', 'rename']:
+			switch.renameContext( ''.join(sys.argv[2:]))
+		elif sys.argv[1] in ['rm', 'delete', 'remove']:
+			switch.removeContext( sys.argv[2], sys.argv[3] )
 		else:
 			show_help()
 
