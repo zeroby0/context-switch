@@ -93,8 +93,11 @@ class Switch: # God has instructed me to use OOP. That's why.
 
 	def currentStatus(self):
 		error_ifNotInit(self.repo)
-		print('currently in context:')
-		print(self.__getCurrentContext())
+		print('currently in context: ' + self.__getCurrentContext())
+		print('Available contexts:')
+		for context in self.__getAvailableContexts():
+			print(context)
+		return
 
 	def changeContext(self, contextName):
 		debug("enter: changeContext()")
@@ -118,6 +121,15 @@ class Switch: # God has instructed me to use OOP. That's why.
 		# Move all files in that context to PWD
 		os.system('mv ' + self.repo + '/' + contextName + '/*' + ' ' + './' + ' >/dev/null 2>&1')
 		debug('exit: __expandContext()')
+
+	def __getAvailableContexts(self):
+		error_ifNotInit(self.repo)
+
+		contexts = os.listdir(self.repo + '/')
+
+		return [ i for i in contexts if i not in [self.ignoreFile]]
+
+
 
 	def __getCurrentContext(self):
 		error_ifNotInit(self.repo)
@@ -157,7 +169,7 @@ if __name__ == '__main__':
 	elif len(sys.argv) == 3:
 		if sys.argv[1] in ['add', '--add', '-a', '-add']:
 			switch.createContext( ''.join(sys.argv[2:]) )
-		elif sys.argv[1] in ['checkout', 'ck', '-ck', '--ck']:
+		elif sys.argv[1] in ['checkout', 'ck', '-ck', '--ck', 'cd']:
 			switch.changeContext( ''.join(sys.argv[2:]) )
 		else:
 			show_help()
