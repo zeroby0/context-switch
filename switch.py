@@ -182,7 +182,7 @@ class Switch: # God has instructed me to use OOP. That's why.
 
 		os.system('mv ' + self.repo + '/' + currentName + ' ' + self.repo + '/' + newName)
 
-		if self.__getCurrentContext() == contextName:
+		if self.__getCurrentContext() == currentName:
 			with open(self.current_context_file, 'w') as fp:
 				fp.write(newName)
 		
